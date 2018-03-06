@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @category Beecom
+ * @package Beecom\Core
+ * @author Lukas Beranek <lukas@beecom.com>
+ * @copyright Copyright (c) 2018 Beecom, (http://beecom.io)
+ * @license http://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Beecom_Core::all" title="Beecom" module="Beecom_Core" sortOrder="60" resource="Beecom_Core::all" />
+    </menu>
+</config>

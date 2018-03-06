@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @category Beecom
+ * @package Beecom\Core
+ * @author Lukas Beranek <lukas@beecom.com>
+ * @copyright Copyright (c) 2018 Beecom, (http://beecom.io)
+ * @license http://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+    <module name="Beecom_Core" setup_version="1.0.0">
+        <sequence>
+            <module name="Magento_Catalog"/>
+        </sequence>
+    </module>
+</config>
