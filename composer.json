@@ -1,5 +1,5 @@
 {
-    "name": "beecom/magento-2-module-core",
+    "name": "beecomprg/magento-2-module-core",
     "description": "Beecom Core module for Magento 2 extensions.",
     "type": "magento2-module",
     "version": "1.0.1",
