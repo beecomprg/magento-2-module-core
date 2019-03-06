@@ -10,6 +10,6 @@ its own.
 
 Run
 ```
-composer require beecom/magento-2-module-core
+composer require beecomprg/magento-2-module-core
 bin/magento setup:upgrade
 ```
