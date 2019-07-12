@@ -43,7 +43,7 @@ class ShippingMethods extends \Magento\Framework\View\Element\Html\Select
         $deliveryMethodsArray = array();
         foreach ($deliveryMethods as $shippigCode => $shippingModel) {
             $shippingTitle = (is_string($shippingModel)) ? $shippingModel : $this->_scopeConfig->getValue('carriers/'.$shippigCode.'/title');
-            $deliveryMethodsArray[$shippigCode] = sprintf("%s [%s]", $shippingTitle, $shippigCode);
+            $deliveryMethodsArray[$shippigCode] = $shippingTitle;
         }
         return $deliveryMethodsArray;
     }
@@ -66,7 +66,8 @@ class ShippingMethods extends \Magento\Framework\View\Element\Html\Select
     {
         if (!$this->getOptions()) {
             foreach ($this->getDeliveryMethods() as $groupId => $groupLabel) {
-                $this->addOption($groupId, addslashes($groupLabel));
+                $formattedGroupLabel = sprintf("%s [%s]", $groupLabel, $groupId);
+                $this->addOption($groupId, addslashes($formattedGroupLabel));
             }
         }
         return parent::_toHtml();
