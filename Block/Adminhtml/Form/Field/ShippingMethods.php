@@ -32,18 +32,17 @@ class ShippingMethods extends \Magento\Framework\View\Element\Html\Select
     }
 
     /**
-     * Retrieve allowed customer groups
-     *
-     * @param int $groupId return name by customer group id
-     * @return array|string
+     * @param bool $quoteLikeCodes
+     * @return array
      */
-    public function getDeliveryMethods()
+    public function getDeliveryMethods($quoteLikeCodes = false)
     {
         $deliveryMethods = $this->_deliveryModelConfig->getAllCarriers();
         $deliveryMethodsArray = array();
-        foreach ($deliveryMethods as $shippigCode => $shippingModel) {
-            $shippingTitle = (is_string($shippingModel)) ? $shippingModel : $this->_scopeConfig->getValue('carriers/'.$shippigCode.'/title');
-            $deliveryMethodsArray[$shippigCode] = $shippingTitle;
+        foreach ($deliveryMethods as $shippingCode => $shippingModel) {
+            $shippingTitle = (is_string($shippingModel)) ? $shippingModel : $this->_scopeConfig->getValue('carriers/'.$shippingCode.'/title');
+            $shippingCode = ($quoteLikeCodes) ? sprintf("%s_%s", $shippingCode, $shippingCode) : $shippingCode;
+            $deliveryMethodsArray[$shippingCode] = $shippingTitle;
         }
         return $deliveryMethodsArray;
     }
