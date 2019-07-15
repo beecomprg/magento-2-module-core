@@ -83,7 +83,6 @@ class Data extends AbstractHelper
         $map = $this->getConfigMapArray($path, $storeId);
         $hits = [];
         foreach ($map as $mapValue){
-            var_dump($mapValue);
             $hits[] = $mapValue;
         }
         if(count($hits) > 0){
