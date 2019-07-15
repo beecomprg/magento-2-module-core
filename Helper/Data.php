@@ -49,6 +49,17 @@ class Data extends AbstractHelper
         return $this->arrayMapCache[$path];
     }
 
+    public function getConfigMapArray($path, $storeId = null){
+        if(!isset($this->arrayMapCache[$path])){
+            $this->arrayMapCache[$path] = [];
+            $configValue = $this->getMap($path, $storeId);
+            foreach ($configValue as $map){
+                $this->arrayMapCache[$path][][(string) $map['method']] = $map['code'];
+            }
+        }
+        return $this->arrayMapCache[$path];
+    }
+
     protected function getMap($path, $store = null){
         try{
             $configValue = $this->serializer->unserialize(
@@ -69,11 +80,17 @@ class Data extends AbstractHelper
     }
 
     public function getMapValueByValue($path, $needle, $storeId = null){
-        $map = array_flip($this->getConfigMap($path, $storeId));
-        if(isset($map[$needle])){
-            return $map[$needle];
+        $map = $this->getConfigMapArray($path, $storeId);
+        $hits = [];
+        foreach ($map as $mapValue){
+            var_dump($mapValue);
+            $hits[] = $mapValue;
         }
-        return null;
+        if(count($hits) > 0){
+            return $hits;
+        }else{
+            return null;
+        }
     }
 
     public function slugify($string, $options = null){
