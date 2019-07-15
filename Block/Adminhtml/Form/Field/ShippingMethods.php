@@ -1,74 +1,104 @@
 <?php
+namespace Beecom\Core\Helper;
 
-namespace Beecom\Core\Block\Adminhtml\Form\Field;
+use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Framework\App\Helper\Context;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Store\Model\ScopeInterface;
+use Magento\Framework\Serialize\Serializer\Json;
+use Cocur\Slugify\Slugify;
 
-use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Shipping\Model\Config;
-/**
- * HTML select element block with customer groups options
- */
-class ShippingMethods extends \Magento\Framework\View\Element\Html\Select
+
+class Data extends AbstractHelper
 {
-    /**
-     * @var Config
-     */
-    protected $_deliveryModelConfig;
+    protected $logger;
 
-    /**
-     * @var SearchCriteriaBuilder
-     */
-    protected $searchCriteriaBuilder;
+    protected $scopeConfig;
+
+    protected $serializer;
+
+    protected $slugify;
+
+    protected $arrayMap = null;
+
+    protected $arrayMapCache = null;
 
     public function __construct(
-        \Magento\Framework\View\Element\Context $context,
-        Config $deliveryModelConfig,
-        SearchCriteriaBuilder $searchCriteriaBuilder,
-        array $data = []
-    ) {
-        parent::__construct($context, $data);
-
-        $this->_deliveryModelConfig = $deliveryModelConfig;
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        ScopeConfigInterface $scopeConfig,
+        Context $context,
+        Json $serializer,
+        Slugify $slugify,
+        \Psr\Log\LoggerInterface $logger
+    )
+    {
+        parent::__construct($context);
+        $this->serializer = $serializer;
+        $this->logger = $logger;
+        $this->scopeConfig = $scopeConfig;
+        $this->slugify = $slugify;
     }
 
-    /**
-     * @param bool $quoteLikeCodes
-     * @return array
-     */
-    public function getDeliveryMethods($quoteLikeCodes = false)
-    {
-        $deliveryMethods = $this->_deliveryModelConfig->getAllCarriers();
-        $deliveryMethodsArray = array();
-        foreach ($deliveryMethods as $shippingCode => $shippingModel) {
-            $shippingTitle = (is_string($shippingModel)) ? $shippingModel : $this->_scopeConfig->getValue('carriers/'.$shippingCode.'/title');
-            $shippingCode = ($quoteLikeCodes) ? sprintf("%s_%s", $shippingCode, $shippingCode) : $shippingCode;
-            $deliveryMethodsArray[$shippingCode] = $shippingTitle;
-        }
-        return $deliveryMethodsArray;
-    }
-
-    /**
-     * @param string $value
-     * @return $this
-     */
-    public function setInputName($value)
-    {
-        return $this->setName($value);
-    }
-
-    /**
-     * Render block HTML
-     *
-     * @return string
-     */
-    public function _toHtml()
-    {
-        if (!$this->getOptions()) {
-            foreach ($this->getDeliveryMethods() as $groupId => $groupLabel) {
-                $formattedGroupLabel = sprintf("%s [%s]", $groupLabel, $groupId);
-                $this->addOption($groupId, addslashes($formattedGroupLabel));
+    public function getConfigMap($path, $storeId = null){
+        if(!isset($this->arrayMapCache[$path])){
+            $this->arrayMapCache[$path] = [];
+            $configValue = $this->getMap($path, $storeId);
+            foreach ($configValue as $map){
+                $this->arrayMapCache[$path][(string) $map['method']] = $map['code'];
             }
         }
-        return parent::_toHtml();
+        return $this->arrayMapCache[$path];
     }
+
+    public function getConfigMapArray($path, $storeId = null){
+        if(!isset($this->arrayMapCache[$path])){
+            $this->arrayMapCache[$path] = [];
+            $configValue = $this->getMap($path, $storeId);
+            foreach ($configValue as $map){
+                $this->arrayMapCache[$path][][(string) $map['method']] = $map['code'];
+            }
+        }
+        return $this->arrayMapCache[$path];
+    }
+
+    protected function getMap($path, $store = null){
+        try{
+            $configValue = $this->serializer->unserialize(
+                $this->scopeConfig->getValue($path, ScopeInterface::SCOPE_STORE, $store)
+            );
+            return $configValue;
+        }catch (InvalidArgumentException $invalidArgumentException){
+            $this->logger->error($invalidArgumentException->getMessage());
+        }
+    }
+
+    public function getMapValueByCode($path, $needle, $storeId = null){
+        $map = $this->getConfigMap($path, $storeId);
+        if(isset($map[$needle])){
+            return $map[$needle];
+        }
+        return null;
+    }
+
+    public function getMapValueByValue($path, $needle, $storeId = null){
+        $map = $this->getConfigMapArray($path, $storeId);
+        $hits = [];
+        foreach ($map as $mapValue){
+            var_dump($mapValue);
+            $hits[] = $mapValue;
+        }
+        if(count($hits) > 0){
+            return $hits;
+        }else{
+            return null;
+        }
+    }
+
+    public function slugify($string, $options = null){
+        return $this->slugify->slugify($string, $options);
+    }
+
+    public function getSlugify(){
+        return $this->slugify;
+    }
+
 }
