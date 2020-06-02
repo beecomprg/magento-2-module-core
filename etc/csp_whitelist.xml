@@ -1,0 +1,10 @@
+<csp_whitelist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Csp/etc/csp_whitelist.xsd">
+    <policies>
+        <policy id="script-src">
+            <values>
+                <value id="newrelic-com" type="host">https://js-agent.newrelic.com</value>
+                <value id="nrdata-net" type="host">https://bam.nr-data.net</value>
+            </values>
+        </policy>
+    </policies>
+</csp_whitelist>
