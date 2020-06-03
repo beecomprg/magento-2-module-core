@@ -3,6 +3,10 @@
         <policy id="script-src">
             <values>
                 <value id="newrelic-com" type="host">https://js-agent.newrelic.com</value>
+            </values>
+        </policy>
+        <policy id="connect-src">
+            <values>
                 <value id="nrdata-net" type="host">https://bam.nr-data.net</value>
             </values>
         </policy>
